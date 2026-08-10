@@ -1,0 +1,12 @@
+# rembg pins python >=3.11,<3.14 and needs an explicit backend extra --
+# plain `pip install rembg` ships no onnxruntime and fails at first inference.
+rembg[cpu]>=2.0.78
+
+fastapi>=0.115
+uvicorn[standard]>=0.32
+python-multipart>=0.0.12
+pydantic>=2.9
+pydantic-settings>=2.6
+pillow>=11.0
+numpy>=2.1
+groq>=0.13

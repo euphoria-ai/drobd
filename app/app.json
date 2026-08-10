@@ -1,0 +1,63 @@
+{
+  "expo": {
+    "name": "drobe",
+    "slug": "drobe",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "drobe",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.drobe.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "drobe uses the camera to photograph your items so it can cut them out and add them to your wardrobe.",
+        "NSPhotoLibraryUsageDescription": "drobe imports photos of your items from your library so it can cut them out and add them to your wardrobe."
+      }
+    },
+    "android": {
+      "package": "com.drobe.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#000000",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ]
+    },
+    "plugins": [
+      "expo-router",
+      "expo-status-bar",
+      "expo-image",
+      "expo-secure-store",
+      "expo-font",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "drobe uses the camera to photograph your items so it can cut them out and add them to your wardrobe."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "drobe imports photos of your items from your library so it can cut them out and add them to your wardrobe."
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "bd62617e-7463-49d3-9ba1-91608bd82c7b"
+      }
+    },
+    "owner": "yashsinghjis-team"
+  }
+}

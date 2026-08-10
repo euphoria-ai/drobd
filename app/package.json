@@ -1,0 +1,61 @@
+{
+  "name": "app",
+  "version": "1.0.0",
+  "main": "expo-router/entry",
+  "dependencies": {
+    "@gorhom/bottom-sheet": "^5.2.14",
+    "@react-native-async-storage/async-storage": "2.2.0",
+    "@shopify/react-native-skia": "2.6.2",
+    "@supabase/supabase-js": "^2.112.2",
+    "@tanstack/react-query": "^5.101.4",
+    "expo": "~57.0.11",
+    "expo-camera": "~57.0.3",
+    "expo-constants": "~57.0.9",
+    "expo-dev-client": "~57.0.10",
+    "expo-file-system": "~57.0.2",
+    "expo-font": "~57.0.1",
+    "expo-haptics": "~57.0.1",
+    "expo-image": "~57.0.2",
+    "expo-image-manipulator": "~57.0.8",
+    "expo-image-picker": "~57.0.8",
+    "expo-linking": "~57.0.5",
+    "expo-router": "~57.0.11",
+    "expo-secure-store": "~57.0.1",
+    "expo-sensors": "~57.0.2",
+    "expo-status-bar": "~57.0.1",
+    "matter-js": "^0.20.0",
+    "react": "19.2.3",
+    "react-native": "0.86.2",
+    "react-native-gesture-handler": "~2.32.0",
+    "react-native-reanimated": "4.5.1",
+    "react-native-safe-area-context": "~5.7.0",
+    "react-native-screens": "~4.26.0",
+    "react-native-svg": "15.15.4",
+    "react-native-url-polyfill": "^4.0.0",
+    "react-native-worklets": "0.10.1",
+    "zustand": "^5.0.14"
+  },
+  "devDependencies": {
+    "@types/matter-js": "^0.20.2",
+    "@types/react": "~19.2.2",
+    "typescript": "~6.0.3"
+  },
+  "overridesReason": "expo-router lists react-dom as an optional peer; npm resolves it to a newer patch than the react version Expo pins, which deadlocks every subsequent install. This app is native-only and never renders react-dom, so it is pinned to match react.",
+  "overrides": {
+    "react-dom": "19.2.3"
+  },
+  "trustedDependenciesReason": "Bun blocks dependency postinstall scripts unless the package is trusted. @shopify/react-native-skia's postinstall copies the prebuilt Skia static libraries out of react-native-skia-android / -apple-* into its own libs/ directory; without it the Android CMake configure step fails with 'Skia prebuilt binaries not found'.",
+  "trustedDependencies": [
+    "@shopify/react-native-skia"
+  ],
+  "scripts": {
+    "start": "expo start",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
+    "typecheck": "tsc --noEmit",
+    "lint": "expo lint",
+    "postinstall": "node node_modules/@shopify/react-native-skia/scripts/install-libs.js",
+    "eas-build-post-install": "node node_modules/@shopify/react-native-skia/scripts/install-libs.js"
+  },
+  "private": true
+}
