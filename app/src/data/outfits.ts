@@ -170,10 +170,17 @@ export function useSuggestOutfit() {
     mutationFn: async ({
       items,
       occasion,
+      weather,
       excludeItemIds,
     }: {
       items: Item[];
       occasion?: string;
+      /**
+       * The stylist prompt uses this, but nothing in the app sources it yet --
+       * there is no location or forecast provider. Plumbed through so a caller
+       * that gains one does not have to reach past this hook.
+       */
+      weather?: string;
       excludeItemIds?: string[];
     }) => {
       return suggestOutfit({
@@ -186,6 +193,7 @@ export function useSuggestOutfit() {
           times_worn: item.times_worn,
         })),
         occasion,
+        weather,
         excludeItemIds,
       });
     },
