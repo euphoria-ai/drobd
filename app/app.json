@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "drobe",
+    "name": "drobd",
     "slug": "drobe",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -46,6 +46,12 @@
         "expo-image-picker",
         {
           "photosPermission": "drobe imports photos of your items from your library so it can cut them out and add them to your wardrobe."
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "drobd uses your location to show the local weather and dress today's suggested outfit for it."
         }
       ]
     ],

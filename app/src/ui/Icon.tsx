@@ -28,7 +28,9 @@ export type IconName =
   | 'sparkle'
   | 'shuffle'
   | 'trash'
-  | 'minus';
+  | 'minus'
+  | 'calendar'
+  | 'cloud';
 
 const PATHS: Record<IconName, React.ReactNode> = {
   home: <Path d="M3 10.5 12 3l9 7.5M5.5 9.5V20h13V9.5" />,
@@ -68,6 +70,10 @@ const PATHS: Record<IconName, React.ReactNode> = {
   sparkle: <Path d="M12 3c.6 4.2 1.8 5.4 6 6-4.2.6-5.4 1.8-6 6-.6-4.2-1.8-5.4-6-6 4.2-.6 5.4-1.8 6-6Z" />,
   shuffle: <Path d="M3 7h4l10 10h4M3 17h4L17 7h4m0 0-3-3m3 3-3 3m3 10-3-3m3 3-3 3" />,
   trash: <Path d="M4 7h16M9 7V4h6v3m-8 0v13h10V7M10 11v5M14 11v5" />,
+  // A month grid: the two top hooks are the binding rings.
+  calendar: <Path d="M4 6h16v14H4V6Zm0 4h16M8 3v4M16 3v4" />,
+  // A single soft cloud, no fill, to sit next to the forecast line.
+  cloud: <Path d="M7.5 18h9a3.5 3.5 0 0 0 .3-6.98A5 5 0 0 0 7.9 9.8 3.6 3.6 0 0 0 7.5 18Z" />,
 };
 
 export interface IconProps {

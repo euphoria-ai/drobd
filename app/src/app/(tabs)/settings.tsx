@@ -1,9 +1,10 @@
 import { useQueryClient } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
-import { ScrollView, View } from 'react-native';
+import { ScrollView, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { itemKeys } from '../../data/items';
+import { DEFAULT_DISPLAY_NAME, useDisplayName, useSetDisplayName } from '../../data/profile';
 import { clearStrokeCache } from '../../features/pile/strokeCache';
 import { checkHealth } from '../../lib/api';
 import { cacheSizeBytes, clearCache } from '../../lib/imageCache';
@@ -26,10 +27,20 @@ export default function SettingsScreen() {
   const queryClient = useQueryClient();
   const { preference, setPreference } = useThemePreference();
 
+  const { data: displayName } = useDisplayName();
+  const setDisplayName = useSetDisplayName();
+
   const [serverUp, setServerUp] = useState<boolean | null>(null);
   const [cacheMb, setCacheMb] = useState(0);
   const [userId, setUserId] = useState<string | null>(null);
   const [isAnonymous, setIsAnonymous] = useState(true);
+  const [nameDraft, setNameDraft] = useState('');
+
+  // Seed the field from the stored name, leaving it blank for the placeholder
+  // default so the greeting can be personalised from empty.
+  useEffect(() => {
+    if (displayName && displayName !== DEFAULT_DISPLAY_NAME) setNameDraft(displayName);
+  }, [displayName]);
 
   useEffect(() => {
     checkHealth().then(setServerUp);
@@ -82,6 +93,28 @@ export default function SettingsScreen() {
               );
             })}
           </View>
+        </View>
+
+        <View>
+          <SectionLabel>Name</SectionLabel>
+          <TextInput
+            value={nameDraft}
+            onChangeText={setNameDraft}
+            onEndEditing={() => setDisplayName.mutate(nameDraft)}
+            placeholder="What should we call you?"
+            placeholderTextColor={theme.colors.textFaint}
+            returnKeyType="done"
+            style={{
+              marginHorizontal: theme.space.xl,
+              paddingHorizontal: theme.space.lg,
+              paddingVertical: theme.space.md + 2,
+              borderRadius: theme.radius.md,
+              backgroundColor: theme.colors.surface,
+              color: theme.colors.text,
+              fontSize: theme.type.body.fontSize,
+              letterSpacing: theme.type.body.letterSpacing,
+            }}
+          />
         </View>
 
         <View>

@@ -140,31 +140,6 @@ export default function InventoryScreen() {
             }}
           />
         ) : null}
-
-        <View
-          style={{
-            position: 'absolute',
-            right: theme.space.xl,
-            bottom: insets.bottom + 92,
-          }}
-        >
-          <PressableScale onPress={() => router.push('/capture')} scaleTo={0.9}>
-            <View
-              accessibilityRole="button"
-              accessibilityLabel="Add an item"
-              style={{
-                width: 56,
-                height: 56,
-                borderRadius: theme.radius.pill,
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: theme.colors.accentSurface,
-              }}
-            >
-              <Icon name="plus" size={24} color={theme.colors.textInverse} strokeWidth={2} />
-            </View>
-          </PressableScale>
-        </View>
       </View>
 
       {hasAnyItems ? (
