@@ -4,18 +4,24 @@
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { suggestOutfit } from '../lib/api';
+import { suggestOutfit, type SuggestResult } from '../lib/api';
 import type { IsoDate } from '../lib/dates';
-import { addDays, startOfWeek, toIsoDate } from '../lib/dates';
+import { addDays, startOfWeek, toIsoDate, todayIso } from '../lib/dates';
 import { supabase } from '../lib/supabase';
 import type { OutfitSlot } from '../lib/taxonomy';
 import type { Item, OutfitItemRow, OutfitRow } from '../types/database';
-import { itemKeys } from './items';
+import { itemKeys, useItems } from './items';
 
 export const outfitKeys = {
   all: ['outfits'] as const,
   week: (weekStartIso: string) => ['outfits', 'week', weekStartIso] as const,
+  range: (startIso: string, days: number) => ['outfits', 'range', startIso, days] as const,
+  suggestion: (dateIso: string, weatherLabel: string | null) =>
+    ['suggestion', dateIso, weatherLabel] as const,
 };
+
+/** A wardrobe needs at least this many slotted items before a suggestion is worth asking for. */
+export const MIN_ITEMS_FOR_SUGGESTION = 3;
 
 export interface Outfit {
   id: string;
@@ -40,6 +46,38 @@ export function useWeekOutfits(weekStart: Date = startOfWeek()) {
 
   return useQuery({
     queryKey: outfitKeys.week(startIso),
+    queryFn: async (): Promise<Record<IsoDate, Outfit>> => {
+      const { data, error } = await supabase
+        .from('outfits')
+        .select('*, outfit_items(*)')
+        .gte('for_date', startIso)
+        .lte('for_date', endIso);
+
+      if (error) throw error;
+
+      const byDate: Record<IsoDate, Outfit> = {};
+      for (const raw of (data ?? []) as (OutfitRow & { outfit_items: OutfitItemRow[] })[]) {
+        if (raw.for_date) {
+          byDate[raw.for_date] = toOutfit(raw, raw.outfit_items ?? []);
+        }
+      }
+      return byDate;
+    },
+    staleTime: 30_000,
+  });
+}
+
+/**
+ * Outfits across an arbitrary span of `days` starting at `start`, keyed by ISO
+ * date. The two-week home calendar needs more than the seven days
+ * `useWeekOutfits` covers, so this widens the same query.
+ */
+export function useOutfitsRange(start: Date, days: number) {
+  const startIso = toIsoDate(start);
+  const endIso = toIsoDate(addDays(start, days - 1));
+
+  return useQuery({
+    queryKey: outfitKeys.range(startIso, days),
     queryFn: async (): Promise<Record<IsoDate, Outfit>> => {
       const { data, error } = await supabase
         .from('outfits')
@@ -197,5 +235,41 @@ export function useSuggestOutfit() {
         excludeItemIds,
       });
     },
+  });
+}
+
+/**
+ * A once-a-day stylist suggestion for the home screen.
+ *
+ * `useSuggestOutfit` is a mutation, fired by the user on the Outfit tab. The
+ * home card instead wants a passive, cacheable pick that refreshes at most
+ * daily, so this wraps the same API in a query keyed by the day (and the
+ * weather that shaped it). It reads the wardrobe from the shared items cache and
+ * only runs once there are enough slotted items to dress from.
+ */
+export function useDailySuggestion(weatherLabel?: string) {
+  const { data: items } = useItems();
+  const wardrobe = (items ?? []).filter((item) => item.slot !== 'none');
+  const hasEnough = wardrobe.length >= MIN_ITEMS_FOR_SUGGESTION;
+
+  return useQuery<SuggestResult>({
+    queryKey: outfitKeys.suggestion(todayIso(), weatherLabel ?? null),
+    queryFn: () =>
+      suggestOutfit({
+        items: wardrobe.map((item) => ({
+          id: item.id,
+          name: item.name,
+          category: item.category,
+          slot: item.slot,
+          dominant_color: item.dominant_color ?? '',
+          times_worn: item.times_worn,
+        })),
+        weather: weatherLabel,
+      }),
+    enabled: hasEnough,
+    // The key already changes with the day, so a long window just avoids
+    // re-asking the stylist on every home visit.
+    staleTime: 6 * 60 * 60_000,
+    retry: false,
   });
 }
