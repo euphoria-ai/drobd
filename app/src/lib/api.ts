@@ -20,7 +20,13 @@ const BASE_URL = process.env.EXPO_PUBLIC_API_URL?.replace(/\/+$/, '');
  * down -- which sent a previous debugging session chasing the network.
  */
 const PROCESS_TIMEOUT_MS = 120_000;
-const SUGGEST_TIMEOUT_MS = 30_000;
+/**
+ * Must stay comfortably above the server's own `request_timeout_s` (45s) for
+ * the stylist call, plus room for the network. Below it, a slow but perfectly
+ * healthy suggestion is aborted here as a timeout while the server is still
+ * about to answer -- the user sees a failure for a request that succeeded.
+ */
+const SUGGEST_TIMEOUT_MS = 50_000;
 
 export interface ProcessResult {
   cutoutPngBase64: string;

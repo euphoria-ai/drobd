@@ -21,12 +21,16 @@ import { OUTFIT_SLOTS, SLOT_LABELS, type OutfitSlot } from '../../lib/taxonomy';
 import { useWeekOutfits } from '../../data/outfits';
 import { useTheme } from '../../theme';
 import { Button } from '../../ui/Button';
+import { ChipRow } from '../../ui/Chip';
 import { PressableScale } from '../../ui/Pressable';
 import { EmptyState, Screen, ScreenTitle } from '../../ui/Screen';
 import { Text } from '../../ui/Text';
 import type { Item } from '../../types/database';
 
 type Picks = Partial<Record<OutfitSlot, string | null>>;
+
+/** Free text as far as the server is concerned; these are just the shortcuts. */
+const OCCASIONS: readonly string[] = ['casual', 'work', 'dinner', 'gym', 'formal'];
 
 export default function OutfitScreen() {
   const theme = useTheme();
@@ -36,6 +40,7 @@ export default function OutfitScreen() {
   const [selectedDate, setSelectedDate] = useState<IsoDate>(todayIso());
   const [picks, setPicks] = useState<Picks>({});
   const [rationale, setRationale] = useState('');
+  const [occasion, setOccasion] = useState<string | null>(null);
 
   const { data: allItems, bySlot, isLoading } = useItemsBySlot();
   const { data: weekOutfits } = useWeekOutfits(startOfWeek());
@@ -55,6 +60,7 @@ export default function OutfitScreen() {
     const existing = weekOutfits?.[selectedDate];
     setPicks(existing ? { ...existing.picks } : {});
     setRationale('');
+    setOccasion(null);
   }, [selectedDate, weekOutfits]);
 
   const chosenItemIds = useMemo(
@@ -69,6 +75,7 @@ export default function OutfitScreen() {
     try {
       const result = await suggest.mutateAsync({
         items: (allItems ?? []).filter((item) => item.slot !== 'none'),
+        occasion: occasion ?? undefined,
         // Re-rolling should not hand back what is already on screen.
         excludeItemIds: chosenItemIds,
       });
@@ -151,6 +158,15 @@ export default function OutfitScreen() {
         <Text variant="micro" color="textFaint" style={{ paddingHorizontal: theme.space.xl }}>
           {formatLongDay(selectedDate)}
         </Text>
+
+        {/* Steers the stylist. Tapping the active chip clears it again, so
+            "no particular occasion" stays one tap away. */}
+        <ChipRow
+          options={OCCASIONS}
+          value={occasion}
+          onChange={(next) => setOccasion(next === occasion ? null : next)}
+          allLabel="Any"
+        />
 
         {OUTFIT_SLOTS.map((slot) => (
           <SlotCarousel
