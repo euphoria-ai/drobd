@@ -14,11 +14,10 @@ import Animated, { FadeIn } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useItemsBySlot } from '../../data/items';
-import { useSaveOutfit, useSuggestOutfit, useWearOutfit } from '../../data/outfits';
+import { useSaveOutfit, useSuggestOutfit, useWearOutfit, useWeekOutfits } from '../../data/outfits';
 import { SlotCarousel } from '../../features/outfit/SlotCarousel';
 import { buildWeek, formatLongDay, startOfWeek, todayIso, type IsoDate } from '../../lib/dates';
 import { OUTFIT_SLOTS, SLOT_LABELS, type OutfitSlot } from '../../lib/taxonomy';
-import { useWeekOutfits } from '../../data/outfits';
 import { useTheme } from '../../theme';
 import { Button } from '../../ui/Button';
 import { ChipRow } from '../../ui/Chip';
@@ -84,15 +83,6 @@ export default function OutfitScreen() {
     } catch {
       setRationale("Couldn't reach the stylist. Pick something yourself.");
     }
-  };
-
-  const save = async () => {
-    await saveOutfit.mutateAsync({
-      forDate: selectedDate,
-      picks: picks as Partial<Record<OutfitSlot, string>>,
-      source: rationale ? 'ai' : 'manual',
-    });
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => undefined);
   };
 
   const wear = async () => {

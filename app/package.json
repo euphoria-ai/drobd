@@ -39,6 +39,8 @@
   "devDependencies": {
     "@types/matter-js": "^0.20.2",
     "@types/react": "~19.2.2",
+    "eslint": "^9",
+    "eslint-config-expo": "^57.0.1",
     "typescript": "~6.0.3"
   },
   "overridesReason": "expo-router lists react-dom as an optional peer; npm resolves it to a newer patch than the react version Expo pins, which deadlocks every subsequent install. This app is native-only and never renders react-dom, so it is pinned to match react.",
@@ -54,7 +56,8 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "typecheck": "tsc --noEmit",
-    "lint": "expo lint",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "postinstall": "node node_modules/@shopify/react-native-skia/scripts/install-libs.js",
     "eas-build-post-install": "node node_modules/@shopify/react-native-skia/scripts/install-libs.js"
   },
