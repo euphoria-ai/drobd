@@ -79,7 +79,7 @@ async def process(image: UploadFile = File(...)) -> ProcessResponse:
     segment_started = time.perf_counter()
     try:
         result = await asyncio.to_thread(cutout_pipeline.segment, data)
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         log.exception("segmentation failed")
         raise HTTPException(422, f"could not process image: {exc}") from exc
     segment_ms = int((time.perf_counter() - segment_started) * 1000)
