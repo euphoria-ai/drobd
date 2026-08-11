@@ -23,7 +23,6 @@ import { CATEGORIES, type Category } from '../lib/taxonomy';
 import { useTheme } from '../theme';
 import { Button, IconButton } from '../ui/Button';
 import { ChipRow } from '../ui/Chip';
-import { Icon } from '../ui/Icon';
 import { PressableScale } from '../ui/Pressable';
 import { Screen, SectionLabel } from '../ui/Screen';
 import { Text } from '../ui/Text';
